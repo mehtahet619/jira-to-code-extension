@@ -1,0 +1,118 @@
+// === src/extension.ts ===
+import * as vscode from 'vscode';
+import { handleJiraToCodeFlow } from './main';
+
+export function activate(context: vscode.ExtensionContext) {
+  const disposable = vscode.commands.registerCommand('jiraToCode.run', async () => {
+    await handleJiraToCodeFlow(context);
+  });
+
+  context.subscriptions.push(disposable);
+}
+
+export function deactivate() {}
+
+
+// === src/main.ts ===
+import * as vscode from 'vscode';
+import { getJiraTicketDetails, authenticateWithJira } from './jira';
+import { callLLMWithTicket } from './llm';
+import { writeGeneratedFiles } from './writer';
+import { runTests } from './tester';
+import { handleGitOps } from './git';
+
+export async function handleJiraToCodeFlow(context: vscode.ExtensionContext) {
+  const url = await vscode.window.showInputBox({ prompt: 'Enter Jira Ticket URL' });
+  if (!url) return;
+
+  const token = await authenticateWithJira(context);
+  const ticket = await getJiraTicketDetails(url, token);
+  const llmOutput = await callLLMWithTicket(ticket);
+
+  await writeGeneratedFiles(llmOutput);
+  const testPassed = await runTests();
+
+  if (testPassed) {
+    await handleGitOps(ticket, llmOutput);
+    vscode.window.showInformationMessage('Jira to Code flow completed successfully.');
+  } else {
+    vscode.window.showErrorMessage('Tests failed. Please check output.');
+  }
+}
+
+
+// === src/jira.ts ===
+export async function authenticateWithJira(context: vscode.ExtensionContext): Promise<string> {
+  // Stub: OAuth2 flow here
+  return 'dummy-token';
+}
+
+export async function getJiraTicketDetails(url: string, token: string) {
+  // Stub: Use Jira API to get ticket data
+  return {
+    id: 'DEV-123',
+    title: 'Add login endpoint',
+    description: 'Create a POST /login route using JWT',
+    labels: ['backend', 'auth'],
+  };
+}
+
+
+// === src/llm.ts ===
+export async function callLLMWithTicket(ticket: any) {
+  // Stub: Call OpenAI API with prompt
+  return {
+    files: [
+      { path: 'src/auth/login.js', content: "// login logic here" },
+      { path: 'tests/auth/login.test.js', content: "// test logic here" },
+    ],
+    summary: 'Added login route using JWT',
+  };
+}
+
+
+// === src/writer.ts ===
+import * as vscode from 'vscode';
+import * as fs from 'fs';
+import * as path from 'path';
+
+export async function writeGeneratedFiles(llmOutput: any) {
+  const root = vscode.workspace.workspaceFolders?.[0].uri.fsPath;
+  if (!root) return;
+
+  for (const file of llmOutput.files) {
+    const fullPath = path.join(root, file.path);
+    fs.mkdirSync(path.dirname(fullPath), { recursive: true });
+    fs.writeFileSync(fullPath, file.content);
+  }
+}
+
+
+// === src/tester.ts ===
+import { exec } from 'child_process';
+
+export async function runTests(): Promise<boolean> {
+  return new Promise((resolve) => {
+    exec('npm test', (err, stdout, stderr) => {
+      if (err) {
+        console.error(stderr);
+        return resolve(false);
+      }
+      console.log(stdout);
+      resolve(true);
+    });
+  });
+}
+
+
+// === src/git.ts ===
+import { execSync } from 'child_process';
+
+export async function handleGitOps(ticket: any, llmOutput: any) {
+  const branch = `feature/${ticket.id}-auto`;
+  execSync(`git checkout -b ${branch}`);
+  execSync('git add .');
+  execSync(`git commit -m "${ticket.id}: ${llmOutput.summary}"`);
+  execSync(`git push -u origin ${branch}`);
+  // Stub: Use GitHub API to create PR
+}
