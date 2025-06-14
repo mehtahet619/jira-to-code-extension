@@ -1,47 +1,64 @@
 {
-  "name": "jira-to-code",
-  "displayName": "Jira-to-Code",
-  "description": "",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.100.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [],
-  "main": "./out/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "jira-to-code.ai",
-        "title": "Jira to Code AI"
-      }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "pretest": "npm run compile && npm run lint",
-    "lint": "eslint src",
-    "test": "vscode-test"
-  },
-  "devDependencies": {
-    "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
-    "@types/vscode": "^1.100.0",
-    "@typescript-eslint/eslint-plugin": "^8.31.1",
-    "@typescript-eslint/parser": "^8.31.1",
-    "@vitejs/plugin-react": "^4.5.2",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2",
-    "eslint": "^9.28.0",
-    "eslint-config-prettier": "^10.1.5",
-    "eslint-plugin-prettier": "^5.4.1",
-    "prettier": "^3.5.3",
-    "typescript": "^5.8.3",
-    "vite": "^6.3.5",
-    "vite-plugin-eslint": "^1.8.1"
-  }
+    "name": "jira-to-code",
+    "displayName": "Jira-to-Code",
+    "description": "A VS Code extension that converts Jira tickets to code using AI.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.100.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "main": "./out/extension.js",
+    "activationEvents": [],
+    "contributes": {
+        "commands": [
+            {
+                "command": "jira-to-code.ai",
+                "title": "Jira to Code AI"
+            }
+        ]
+    },
+    "scripts": {
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "lint": "eslint src",
+        "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,css,md}\"",
+        "pretest": "npm run compile && npm run lint",
+        "test": "vscode-test",
+        "build:webview": "cd webview && npm install && npm run build",
+        "build": "npm run build:webview && npm run compile",
+        "dev": "npm run watch"
+    },
+    "devDependencies": {
+        "@types/jest": "^29.5.14",
+        "@types/mocha": "^10.0.10",
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.100.0",
+        "@typescript-eslint/eslint-plugin": "^8.31.1",
+        "@typescript-eslint/parser": "^8.31.1",
+        "@vitejs/plugin-react": "^4.5.2",
+        "@vscode/test-cli": "^0.0.10",
+        "@vscode/test-electron": "^2.5.2",
+        "eslint": "^9.0.0",
+        "eslint-config-prettier": "^10.1.5",
+        "eslint-plugin-prettier": "^5.4.1",
+        "prettier": "^3.5.3",
+        "typescript": "^5.4.5",
+        "vite": "^6.0.0",
+        "vite-plugin-eslint": "^1.8.1"
+    },
+    "files": [
+        "out",
+        "webview/dist",
+        "media",
+        "README.md"
+    ],
+    "icon": "media/icon.png",
+    "license": "MIT",
+    "publisher": "Umang Dalvadi",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/UmangDalvadi/jira-to-code"
+    }
 }

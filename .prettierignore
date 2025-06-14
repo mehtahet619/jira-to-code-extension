@@ -1,0 +1,9 @@
+# Ignore build artifacts
+out/
+webview/dist/
+node_modules/
+webview/node_modules/
+
+# Ignore lockfiles (if needed)
+package-lock.json
+webview/package-lock.json

@@ -1,14 +1,14 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "Node16",
-    "lib": ["ES2022", "DOM"],
-    "outDir": "out",
-    "rootDir": "src",
-    "sourceMap": true,
-    "strict": true,
-    // "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["node", "vscode"]
-  },
-  "include": ["src"]
+    "compilerOptions": {
+        "target": "ES2022",
+        "module": "Node16",
+        "lib": ["ES2022", "DOM"],
+        "outDir": "out",
+        "rootDir": "src",
+        "sourceMap": true,
+        "strict": true,
+        // "typeRoots": ["./node_modules/@types", "./src/types"],
+        "types": ["node", "vscode"]
+    },
+    "include": ["src"]
 }

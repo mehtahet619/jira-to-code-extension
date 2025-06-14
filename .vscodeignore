@@ -1,11 +1,26 @@
+# Exclude test files
+src/test/**
+webview/src/**
+webview/public/**
+webview/node_modules/**
+**/*.spec.ts
+
+# Exclude config and local environment
 .vscode/**
-.vscode-test/**
-src/**
+.git/**
 .gitignore
-.yarnrc
-vsc-extension-quickstart.md
-**/tsconfig.json
-**/eslint.config.mjs
-**/*.map
-**/*.ts
-**/.vscode-test.*
+*.log
+README.md
+CHANGELOG.md
+tsconfig.json
+tsconfig.node.json
+tsconfig.app.json
+vite.config.ts
+.vscode-test.mjs
+eslint.config.mjs
+*.lock
+*.env
+*.md
+
+# Optional: Include only necessary webview files
+!webview/dist/**
