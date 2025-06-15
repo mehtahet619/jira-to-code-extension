@@ -5,6 +5,7 @@ import path from "path";
 export default defineConfig({
     root: path.resolve(__dirname),
     plugins: [tailwindcss()],
+    base: "./",
     build: {
         outDir: "dist",
         emptyOutDir: true,
