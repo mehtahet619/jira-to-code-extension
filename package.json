@@ -17,7 +17,8 @@
                 "command": "jira-to-code.ai",
                 "title": "Jira to Code AI"
             }
-        ]
+        ],
+        "uriHandler": true
     },
     "scripts": {
         "compile": "tsc -p ./",
@@ -56,9 +57,13 @@
     ],
     "icon": "media/icon.png",
     "license": "MIT",
-    "publisher": "Umang Dalvadi",
+    "publisher": "umangdalvadi",
     "repository": {
         "type": "git",
         "url": "https://github.com/UmangDalvadi/jira-to-code"
+    },
+    "dependencies": {
+        "axios": "^1.10.0",
+        "dotenv": "^16.5.0"
     }
 }

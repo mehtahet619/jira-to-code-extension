@@ -1,33 +1,26 @@
-import { useEffect, useState } from "react";
-import { postMessage, subscribeMessage } from "../lib/vscodeBridge";
-import { FromWebview, ToWebview } from "../../../src/constants/messageTypes";
+// import { useEffect, useState } from "react";
+// import { postMessage, subscribeMessage } from "../lib/vscodeBridge";
+// import { FromWebview, ToWebview } from "../../../src/constants/messageTypes";
 
-type User = { name: string; status: string };
+import Header from "../components/Header";
+import Tabs from "../components/Tabs";
+import { useAppContext } from "../context/AppContext";
+import Workflow from "./Workflow";
 
 const Home = () => {
-    const [user, setUser] = useState<User | null>(null);
-
-    useEffect(() => {
-        postMessage(FromWebview.GetData);
-        const unsub = subscribeMessage(msg => {
-            if (msg.type === ToWebview.DataResponse) {
-                setUser(msg.payload);
-            }
-        });
-        return () => unsub();
-    }, []);
+    const { activeTab } = useAppContext();
 
     return (
-        <div>
-            <div className="p-4 text-center">
-                <h1 className="text-2xl font-bold mb-4">Jira-to-Code</h1>
-                {user ? (
-                    <p>
-                        {user.name} — <span>{user.status}</span>
-                    </p>
-                ) : (
-                    <p>Loading...</p>
-                )}
+        <div className="min-h-screen bg-gray-900 text-white">
+            {/* Header */}
+            <Header />
+            {/* Tabs */}
+            <Tabs />
+            {/* Content */}
+            <div className="p-6">
+                {/* {activeTab === "dashboard" && <div>Dashboard Content</div>} */}
+                {activeTab === "workflow" && <Workflow />}
+                {activeTab === "settings" && <div>Settings Content</div>}
             </div>
         </div>
     );

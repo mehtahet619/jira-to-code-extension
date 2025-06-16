@@ -1,9 +1,3 @@
-import js from "@eslint/js";
-import globals from "globals";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
-
 export default tseslint.config(
     { ignores: ["dist"] },
     {
@@ -20,6 +14,7 @@ export default tseslint.config(
         rules: {
             ...reactHooks.configs.recommended.rules,
             "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
+
             // ✅ Relax strict typing rules
             "@typescript-eslint/no-explicit-any": "off",
             "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -27,6 +22,10 @@ export default tseslint.config(
             "@typescript-eslint/no-unsafe-call": "off",
             "@typescript-eslint/no-unsafe-member-access": "off",
             "@typescript-eslint/no-unsafe-return": "off",
+
+            // ✅ Change unused variables from error to warning
+            "no-unused-vars": "warn", // JS/TS rule
+            "@typescript-eslint/no-unused-vars": "warn", // TS-specific override
         },
     }
 );

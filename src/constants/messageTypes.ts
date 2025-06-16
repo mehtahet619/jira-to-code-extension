@@ -1,5 +1,5 @@
 export enum FromWebview {
-    GetData = "getData",
+    SendJiraUrl = "sendJiraUrl",
 }
 
 export enum ToWebview {
