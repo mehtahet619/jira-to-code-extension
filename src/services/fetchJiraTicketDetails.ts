@@ -2,10 +2,8 @@ import axios from "axios";
 import logger from "../utils/logger";
 import { extractDocsFromGemini } from "../llms/gemini";
 
-const ATLASSIAN_EMAIL = process.env.ATLASSIAN_EMAIL! || "yorkhackathonteam15@gmail.com";
-const ATLASSIAN_API_TOKEN =
-    process.env.ATLASSIAN_API_TOKEN! ||
-    "ATATT3xFfGF0L2A7Qv4_32mJnzv5q3Q5py7yC_5ODkoMUNAUE6JPiraQhCRsE1lkLOvMHpsod-Uvtf6diKc3p4xEojHcp5DNpn1tNmWGz1Zn5sYlvllvsKKPPIfIfXKbTEjjEy511RwbiuEFvmh2DtYcR71KelHw_jhj8FYkSRLKc0c507wM3BU=4AA0DD2F"; // 🔐 Avoid committing real tokens in code
+const ATLASSIAN_EMAIL = process.env.ATLASSIAN_EMAIL!;
+const ATLASSIAN_API_TOKEN = process.env.ATLASSIAN_API_TOKEN!;
 
 export function extractTicketKey(jiraUrl: string): string | null {
     const regex = /\/browse\/([A-Z]+-\d+)/i;

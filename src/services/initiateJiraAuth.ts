@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID! || "yO4sa3yAvRP3pHJSFIHoPsYaorOlbI7q";
-const REDIRECT_URI = process.env.ATLASSIAN_REDIRECT_URI! || "http://localhost:5173/callback";
+const CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID!;
+const REDIRECT_URI = process.env.ATLASSIAN_REDIRECT_URI!;
 
 export async function initiateJiraAuth() {
     const scopes = ["read:me", "read:jira-work", "read:account", "offline_access"];

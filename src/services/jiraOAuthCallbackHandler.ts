@@ -16,12 +16,9 @@ export async function handleJiraOAuthCallback(uri: vscode.Uri, context: vscode.E
     }
 
     try {
-        const CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID! || "yO4sa3yAvRP3pHJSFIHoPsYaorOlbI7q";
-        const CLIENT_SECRET =
-            process.env.ATLASSIAN_CLIENT_SECRET! ||
-            "ATOAS8SVqDLRpUZFr_f7ZSN8GzddCmc12C1rt3qk7vxz8lAQkEhAOTDAqTivPQsQcVtU0B0238EE";
-        const REDIRECT_URI =
-            process.env.ATLASSIAN_REDIRECT_URI! || "http://localhost:5173/callback";
+        const CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID!;
+        const CLIENT_SECRET = process.env.ATLASSIAN_CLIENT_SECRET!;
+        const REDIRECT_URI = process.env.ATLASSIAN_REDIRECT_URI!;
 
         const tokenResponse = await axios.post("https://auth.atlassian.com/oauth/token", {
             grant_type: "authorization_code",

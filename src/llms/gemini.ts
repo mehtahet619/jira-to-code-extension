@@ -4,9 +4,7 @@ dotenv.config();
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import logger from "../utils/logger";
 
-const genAI = new GoogleGenerativeAI(
-    process.env.GOOGLE_API_KEY! || "AIzaSyBbozeLF1v4UGZd1p1FBPB7w5zJ3Z7x_TE"
-);
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY!);
 
 export async function extractDocsFromGemini(issueData: any): Promise<string> {
     const summary = issueData.fields.summary || "";
