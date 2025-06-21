@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 import { getHtmlForWebview } from "./getHtmlForWebview";
 import { handleWebviewMessage } from "./handlers/webviewMessageHandler";
-import { log } from "./utils/logger";
+import logger from "./utils/logger";
 import axios from "axios";
 import dotenv from "dotenv";
 import { handleJiraOAuthCallback } from "./services/jiraOAuthCallbackHandler";
@@ -9,7 +9,7 @@ import { handleJiraOAuthCallback } from "./services/jiraOAuthCallbackHandler";
 dotenv.config();
 
 export function activate(context: vscode.ExtensionContext) {
-    log("🚀 Extension activated");
+    logger.info("🚀 Extension activated");
 
     // Register command to open the webview panel
     const disposable = vscode.commands.registerCommand("jira-to-code.ai", () => {
@@ -39,5 +39,5 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 export function deactivate() {
-    log("🛑 Extension deactivated");
+    logger.info("🛑 Extension deactivated");
 }

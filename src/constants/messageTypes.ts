@@ -3,5 +3,5 @@ export enum FromWebview {
 }
 
 export enum ToWebview {
-    DataResponse = "dataResponse",
+    JiraDetailsFetched = "jiraDetailsFetched",
 }

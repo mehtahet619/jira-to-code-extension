@@ -1,0 +1,463 @@
+[20-06-2025 12:08:47 AM] INFO: 🚀 Extension activated
+[20-06-2025 12:08:58 AM] INFO: ✅ Received from Webview:
+→ Meta: {
+  "type": "sendJiraUrl",
+  "payload": {
+    "jiraUrl": "https://yorkhackathonteam15.atlassian.net/browse/WEAT-1"
+  }
+}
+[20-06-2025 12:08:58 AM] INFO: Fetching Jira ticket
+→ Meta: {
+  "jiraUrl": "https://yorkhackathonteam15.atlassian.net/browse/WEAT-1"
+}
+[20-06-2025 12:08:58 AM] INFO: Using Atlassian Email
+→ Meta: {
+  "email": "yorkhackathonteam15@gmail.com"
+}
+[20-06-2025 12:08:58 AM] INFO: Using Atlassian API Token
+→ Meta: {
+  "token": "ATATT3xFfGF0L2A7Qv4_32mJnzv5q3Q5py7yC_5ODkoMUNAUE6JPiraQhCRsE1lkLOvMHpsod-Uvtf6diKc3p4xEojHcp5DNpn1tNmWGz1Zn5sYlvllvsKKPPIfIfXKbTEjjEy511RwbiuEFvmh2DtYcR71KelHw_jhj8FYkSRLKc0c507wM3BU=4AA0DD2F"
+}
+[20-06-2025 12:08:58 AM] INFO: Using API URL
+→ Meta: {
+  "apiUrl": "https://yorkhackathonteam15.atlassian.net/rest/api/3/issue/WEAT-1"
+}
+[20-06-2025 12:08:59 AM] INFO: ✅ Fetched Jira issue data
+→ Meta: {
+  "issueData": {
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "id": "10008",
+    "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/issue/10008",
+    "key": "WEAT-1",
+    "fields": {
+      "statuscategorychangedate": null,
+      "issuetype": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/issuetype/10007",
+        "id": "10007",
+        "description": "A small, distinct piece of work.",
+        "iconUrl": "https://yorkhackathonteam15.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10318?size=medium",
+        "name": "Task",
+        "subtask": false,
+        "avatarId": 10318,
+        "entityId": "dd7fef37-2782-4b3c-80e6-0874d7757328",
+        "hierarchyLevel": 0
+      },
+      "components": [],
+      "timespent": 0,
+      "timeoriginalestimate": 0,
+      "project": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/project/10001",
+        "id": "10001",
+        "key": "WEAT",
+        "name": "Weather",
+        "projectTypeKey": "software",
+        "simplified": true,
+        "avatarUrls": {
+          "48x48": "https://yorkhackathonteam15.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10422",
+          "24x24": "https://yorkhackathonteam15.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10422?size=small",
+          "16x16": "https://yorkhackathonteam15.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10422?size=xsmall",
+          "32x32": "https://yorkhackathonteam15.atlassian.net/rest/api/3/universal_avatar/view/type/project/avatar/10422?size=medium"
+        }
+      },
+      "description": {
+        "type": "doc",
+        "version": 1,
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "Develop a comparison table allowing users to view weather metrics for 3+ cities simultaneously using OpenWeatherMap API data."
+              }
+            ]
+          },
+          {
+            "type": "heading",
+            "attrs": {
+              "level": 4
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "Acceptance Criteria",
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "✅ "
+              },
+              {
+                "type": "text",
+                "text": "Core Functionality (50%)",
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "bulletList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+20%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " Displays 3+ cities' data within 15 seconds"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+20%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " All columns show real API data (no mock values)"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+10%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " Maintains sort state during data refreshes"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "✅ "
+              },
+              {
+                "type": "text",
+                "text": "UX (30%)",
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "bulletList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+15%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " Clear visual differentiation between cities"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+15%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " Empty state when no cities selected"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "paragraph",
+            "content": [
+              {
+                "type": "text",
+                "text": "✅ "
+              },
+              {
+                "type": "text",
+                "text": "Innovation (20%)",
+                "marks": [
+                  {
+                    "type": "strong"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "text": " "
+              },
+              {
+                "type": "text",
+                "text": "(Bonus)",
+                "marks": [
+                  {
+                    "type": "em"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "bulletList",
+            "content": [
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+10%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " \"Delta\" mode showing differences from first city"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "listItem",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "+10%",
+                        "marks": [
+                          {
+                            "type": "strong"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "text",
+                        "text": " Mini sparkline graphs for temp trends"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "fixVersions": [],
+      "aggregatetimespent": 0,
+      "statusCategory": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/statuscategory/2",
+        "id": 2,
+        "key": "new",
+        "colorName": "blue-gray",
+        "name": "To Do"
+      },
+      "resolution": null,
+      "customfield_10036": null,
+      "customfield_10015": null,
+      "timetracking": {
+        "originalEstimate": "0m",
+        "remainingEstimate": "0m",
+        "timeSpent": "0m",
+        "originalEstimateSeconds": 0,
+        "remainingEstimateSeconds": 0,
+        "timeSpentSeconds": 0
+      },
+      "security": null,
+      "attachment": [],
+      "aggregatetimeestimate": 0,
+      "resolutiondate": null,
+      "workratio": -1,
+      "summary": "Implement Multi-City Weather Comparison Table",
+      "watches": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/issue/WEAT-1/watchers",
+        "watchCount": 0,
+        "isWatching": false
+      },
+      "lastViewed": "2025-06-19T23:27:21.635+0530",
+      "creator": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/user?accountId=712020%3A0653761a-5133-4ed1-a42d-c19c67205430",
+        "accountId": "712020:0653761a-5133-4ed1-a42d-c19c67205430",
+        "emailAddress": "yorkhackathonteam15@gmail.com",
+        "avatarUrls": {
+          "48x48": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png",
+          "24x24": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png",
+          "16x16": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png",
+          "32x32": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png"
+        },
+        "displayName": "yorkhackathonteam15",
+        "active": true,
+        "timeZone": "Asia/Calcutta",
+        "accountType": "atlassian"
+      },
+      "subtasks": [],
+      "created": "2025-05-29T16:38:00.000+0530",
+      "reporter": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/user?accountId=712020%3A0653761a-5133-4ed1-a42d-c19c67205430",
+        "accountId": "712020:0653761a-5133-4ed1-a42d-c19c67205430",
+        "emailAddress": "yorkhackathonteam15@gmail.com",
+        "avatarUrls": {
+          "48x48": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png",
+          "24x24": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png",
+          "16x16": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png",
+          "32x32": "https://secure.gravatar.com/avatar/73cce576c164e163a4da3cdf007ec630?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FY-3.png"
+        },
+        "displayName": "yorkhackathonteam15",
+        "active": true,
+        "timeZone": "Asia/Calcutta",
+        "accountType": "atlassian"
+      },
+      "aggregateprogress": {
+        "progress": 0,
+        "total": 0
+      },
+      "priority": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/priority/3",
+        "iconUrl": "https://yorkhackathonteam15.atlassian.net/images/icons/priorities/medium_new.svg",
+        "name": "Medium",
+        "id": "3"
+      },
+      "labels": [],
+      "environment": null,
+      "customfield_10019": "0|i0001r:",
+      "timeestimate": 0,
+      "aggregatetimeoriginalestimate": 0,
+      "versions": [],
+      "duedate": null,
+      "progress": {
+        "progress": 0,
+        "total": 0
+      },
+      "votes": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/issue/WEAT-1/votes",
+        "votes": 0,
+        "hasVoted": false
+      },
+      "issuelinks": [],
+      "comment": {
+        "comments": [],
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/issue/10008/comment",
+        "maxResults": 0,
+        "total": 0,
+        "startAt": 0
+      },
+      "worklog": {
+        "startAt": 0,
+        "maxResults": 20,
+        "total": 0,
+        "worklogs": []
+      },
+      "assignee": null,
+      "updated": "2025-05-29T16:50:00.000+0530",
+      "status": {
+        "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/status/10003",
+        "description": "",
+        "iconUrl": "https://yorkhackathonteam15.atlassian.net/",
+        "name": "To Do",
+        "id": "10003",
+        "statusCategory": {
+          "self": "https://yorkhackathonteam15.atlassian.net/rest/api/3/statuscategory/2",
+          "id": 2,
+          "key": "new",
+          "colorName": "blue-gray",
+          "name": "To Do"
+        }
+      }
+    }
+  }
+}
+[20-06-2025 12:09:15 AM] INFO: ✅ Extracted docs from gemini
+→ Meta: {
+  "llmResult": "## Development Requirements & Tasks from Jira Ticket: \"Implement Multi-City Weather Comparison Table\"\n\nHere's a breakdown of the development requirements and tasks, extracted from the Jira ticket.  I've categorized them for clarity.\n\n**I. Core Requirements (50% - Highest Priority)**\n\n*   **Data Source:** Integrate with the OpenWeatherMap API.\n*   **Functionality:**  Develop a table to display weather data.\n*   **City Support:** The table must support comparison of **3 or more cities** simultaneously.\n*   **Weather Metrics:**  The table needs to display relevant weather metrics (the specific metrics aren't defined in the ticket and would need clarification - *see \"Further Clarification Needed\" below*).\n\n**II. UX Requirements (30% - Medium Priority)**\n\n*   **User Experience:**  Focus on a good user experience for viewing and comparing the weather data. (This is vague and needs further definition - *see \"Further Clarification Needed\" below*).\n\n**III. Bonus/Innovation (20% - Low Priority)**\n\n*   **Innovation:** Explore and potentially implement innovative features beyond the core functionality. (This is very open-ended and requires brainstorming/design input).\n\n\n\n**Tasks (Derived from Requirements - these are *examples* and would need to be broken down further):**\n\n1.  **API Integration:**\n    *   Research OpenWeatherMap API documentation.\n    *   Obtain API key.\n    *   Implement API calls to fetch weather data for a given city.\n    *   Handle API errors and rate limiting.\n2.  **Data Model:**\n    *   Define a data structure to represent weather data for a city.\n3.  **Table Development:**\n    *   Design the table structure (HTML/CSS).\n    *   Implement the table logic to display data for multiple cities.\n    *   Implement city adding/removing functionality.\n4.  **UX Implementation:**\n    *   Design user interface for city selection.\n    *   Ensure table is responsive and accessible.\n    *   Implement clear visual cues for data comparison.\n5.  **Testing:**\n    *   Unit tests for API integration and data processing.\n    *   Integration tests for the table functionality.\n    *   User acceptance testing (UAT) to validate UX.\n6.  **Innovation (Optional):**\n    *   Brainstorm and prototype innovative features (e.g., visual weather icons, interactive charts, forecast display).\n\n\n\n\n**Further Clarification Needed:**\n\n*   **Specific Weather Metrics:** What specific weather metrics should be displayed (temperature, humidity, wind speed, pressure, etc.)?\n*   **UX Details:** What are the specific UX expectations?  Are there wireframes or mockups available?  What is the target user?\n*   **City Selection:** How will users select the cities to compare? (e.g., search box, dropdown list, pre-defined list)\n*   **Error Handling:**  How should errors (e.g., API failures, invalid city names) be handled and displayed to the user?\n*   **Data Refresh:** How often should the weather data be refreshed?  Is there a manual refresh option?\n\n\n\nThis breakdown provides a starting point for development.  A more detailed task list would be created during sprint planning, with input from the development team and stakeholders."
+}

@@ -1,40 +1,53 @@
 import * as vscode from "vscode";
-import { FromWebview } from "../constants/messageTypes";
-import { log } from "../utils/logger";
-import dotenv from "dotenv";
+import { FromWebview, ToWebview } from "../constants/messageTypes";
+import logger from "../utils/logger";
 import { initiateJiraAuth } from "../services/initiateJiraAuth";
-
-dotenv.config();
-
-const CLIENT_ID = process.env.ATLASSIAN_CLIENT_ID! || "yO4sa3yAvRP3pHJSFIHoPsYaorOlbI7q";
-const REDIRECT_URI =
-    process.env.ATLASSIAN_REDIRECT_URI! || "vscode://umangdalvadi.jira-to-code/receive-jira-token";
+import { fetchJiraAndExtract } from "../services/fetchJiraTicketDetails";
 
 export async function handleWebviewMessage(
     message: any,
     panel: vscode.WebviewPanel,
     context: vscode.ExtensionContext
 ) {
-    log("✅ Received from Webview:", message);
+    logger.info("✅ Received from Webview:", message);
 
     switch (message.type) {
         case FromWebview.SendJiraUrl:
-            log("🔗 Processing Jira URL:", message.payload.jiraUrl);
+            const jiraUrl = message.payload.jiraUrl;
+            const token = await context.secrets.get("jira_access_token");
 
-            const secretStorage = context.secrets;
-            const token = await secretStorage.get("jira_access_token");
+            // context.secrets.delete("jira_access_token");
+            // context.secrets.delete("jira_refresh_token");
+            if (!jiraUrl) {
+                vscode.window.showErrorMessage("❌ Jira URL is missing.");
+                return;
+            }
 
-            if (token) {
-                vscode.window.showInformationMessage("✅ Already authenticated with Jira.");
-                log("🔑 Found existing Jira token in secret storage:", token);
-                // You can now send token back to Webview or continue with Jira API calls
-            } else {
+            if (!token) {
+                vscode.window.showWarningMessage("🔐 Please authenticate with Jira first.");
                 initiateJiraAuth();
+                return;
+            }
+
+            try {
+                vscode.window.showInformationMessage(
+                    "🧾 Fetching Jira issue and extracting insights..."
+                );
+
+                const result = await fetchJiraAndExtract(jiraUrl, token);
+
+                panel.webview.postMessage({
+                    type: ToWebview.JiraDetailsFetched,
+                    payload: result,
+                });
+            } catch (err: any) {
+                console.error("❌ Failed to fetch Jira ticket or extract requirements:", err);
+                vscode.window.showErrorMessage("❌ Failed to fetch Jira ticket or analyze it.");
             }
 
             break;
 
         default:
-            log("⚠️ Unknown message type:", message.type);
+            logger.warn("⚠️ Unknown message type:", message.type);
     }
 }
