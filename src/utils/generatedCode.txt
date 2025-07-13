@@ -1,0 +1,715 @@
+{
+  setup: { frontend: { commands: [Array] }, backend: { commands: [Array] } },
+  structureExplanation: {
+    frontend: {
+      'client/src/pages': 'All main React pages; ComparePage is the root comparison screen for multi-city weather.',
+      'client/src/components': 'Reusable components: CitySearch (to add cities), CityItem (shows one city row), WeatherTable (tabular weather data).',
+      'client/src/services': 'API integration logic (weatherService.ts) used by pages/components.',
+      'client/src/utils': 'Helpers for data transformation, formatting, error utilities.',
+      'client/src/styles': 'Global app styles and Tailwind config (index.css etc).',
+      'client/src/__tests__': 'All React component test files go here.',
+      'client/src/routes': 'React Router route config and wrappers.'
+    },
+    backend: {
+      'server/src/routes': 'Express route(s): weatherRoutes.ts defines /api/weather/compare and validates input.',
+      'server/src/controllers': 'weatherController.ts encapsulates the logic for OpenWeatherMap API calls, formatting and response.',
+      'server/src/services': 'weatherService.ts handles direct calls to external OpenWeatherMap API.',
+      'server/src/config': '.env loader (config.ts) and reusable config logic (e.g., api keys).',
+      'server/src/middleware': 'Shared Express error handler(s); input validation as middleware.',
+      'server/tests': 'API endpoint test files using Jest + Supertest.'
+    }
+  },
+  files: {
+    fileMap: {
+      'client/package.json': '{\n' +
+        '  "name": "client",\n' +
+        '  "version": "0.0.0",\n' +
+        '  "private": true,\n' +
+        '  "type": "module",\n' +
+        '  "scripts": {\n' +
+        '    "dev": "vite",\n' +
+        '    "build": "vite build",\n' +
+        '    "preview": "vite preview",\n' +
+        '    "lint": "eslint . --ext .ts,.tsx,.js,.jsx"\n' +
+        '  }\n' +
+        '}',
+      'client/vite.config.ts': "import { defineConfig } from 'vite';\n" +
+        "import react from '@vitejs/plugin-react';\n" +
+        'export default defineConfig({\n' +
+        '  plugins: [react()],\n' +
+        '  server: {\n' +
+        "    port: parseInt(process.env.FRONTEND_PORT || '5173')\n" +
+        '  }\n' +
+        '});\n',
+      'client/tailwind.config.cjs': 'module.exports = {\n' +
+        '  content: [\n' +
+        "    './index.html',\n" +
+        "    './src/**/*.{js,ts,jsx,tsx}'\n" +
+        '  ],\n' +
+        '  theme: {\n' +
+        '    extend: {},\n' +
+        '  },\n' +
+        '  plugins: [],\n' +
+        '};\n',
+      'client/src/index.css': '@import "tailwindcss";\n' +
+        ':root {\n' +
+        'font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;\n' +
+        'line-height: 1.5;\n' +
+        'font-weight: 400;\n' +
+        'color-scheme: light dark;\n' +
+        'color: rgba(255, 255, 255, 0.87);\n' +
+        'background-color: #242424;\n' +
+        'font-synthesis: none;\n' +
+        'text-rendering: optimizeLegibility;\n' +
+        '-webkit-font-smoothing: antialiased;\n' +
+        '-moz-osx-font-smoothing: grayscale;\n' +
+        '-webkit-text-size-adjust: 100%;\n' +
+        '}\n' +
+        '* { box-sizing: border-box; }\n' +
+        'body { margin:0; padding:0; min-width:320px; min-height:100vh; background:linear-gradient(135deg, #667eea 0%, #764ba2 100%); }\n' +
+        '#root { min-height: 100vh; }\n' +
+        '.App { min-height: 100vh; }\n',
+      'client/src/main.tsx': "import React from 'react';\n" +
+        "import ReactDOM from 'react-dom/client';\n" +
+        "import { BrowserRouter } from 'react-router-dom';\n" +
+        "import App from './App';\n" +
+        "import './index.css';\n" +
+        "ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(\n" +
+        '  <React.StrictMode>\n' +
+        '    <BrowserRouter>\n' +
+        '      <App />\n' +
+        '    </BrowserRouter>\n' +
+        '  </React.StrictMode>\n' +
+        ');\n',
+      'client/src/App.tsx': "import React from 'react';\n" +
+        "import { Routes, Route, Navigate } from 'react-router-dom';\n" +
+        "import ComparePage from './pages/ComparePage';\n" +
+        'export default function App() {\n' +
+        '  return (\n' +
+        '    <div className="App min-h-screen bg-gradient-to-br from-indigo-500 to-purple-700 flex flex-col items-center py-8 px-2">\n' +
+        '      <Routes>\n' +
+        '        <Route path="/compare" element={<ComparePage />} />\n' +
+        '        <Route path="*" element={<Navigate to="/compare" />} />\n' +
+        '      </Routes>\n' +
+        '    </div>\n' +
+        '  );\n' +
+        '}\n',
+      'client/src/pages/ComparePage.tsx': "import React, { useState, useCallback } from 'react';\n" +
+        "import { CityWeatherData } from '../types';\n" +
+        "import CitySearch from '../components/CitySearch';\n" +
+        "import WeatherTable from '../components/WeatherTable';\n" +
+        "import { fetchWeatherForCities } from '../services/weatherService';\n" +
+        'export default function ComparePage() {\n' +
+        '  const [selectedCities, setSelectedCities] = useState<string[]>([]);\n' +
+        '  const [weatherData, setWeatherData] = useState<CityWeatherData[]>([]);\n' +
+        '  const [loading, setLoading] = useState(false);\n' +
+        "  const [unit, setUnit] = useState<'metric' | 'imperial'>('metric');\n" +
+        "  const [error, setError] = useState('');\n" +
+        '  const handleAddCity = useCallback((city: string) => {\n' +
+        '    if (!selectedCities.includes(city.trim())) {\n' +
+        '      setSelectedCities(cities => [...cities, city.trim()]);\n' +
+        '    }\n' +
+        '  }, [selectedCities]);\n' +
+        '  const handleRemoveCity = (city: string) => {\n' +
+        '    setSelectedCities(cities => cities.filter(c => c !== city));\n' +
+        '    setWeatherData(data => data.filter(d => d.city.toLowerCase() !== city.toLowerCase()));\n' +
+        '  };\n' +
+        '  const fetchAndSetWeather = async () => {\n' +
+        '    setLoading(true);\n' +
+        "    setError('');\n" +
+        '    try {\n' +
+        '      const data = await fetchWeatherForCities(selectedCities, unit);\n' +
+        '      setWeatherData(data);\n' +
+        '    } catch (err: any) {\n' +
+        "      setError(err.message || 'Error fetching weather');\n" +
+        '      setWeatherData([]);\n' +
+        '    }\n' +
+        '    setLoading(false);\n' +
+        '  };\n' +
+        '  React.useEffect(() => {\n' +
+        '    if (selectedCities.length >= 3) {\n' +
+        '      fetchAndSetWeather();\n' +
+        '    } else {\n' +
+        '      setWeatherData([]);\n' +
+        '    }\n' +
+        '    // eslint-disable-next-line\n' +
+        '  }, [selectedCities, unit]);\n' +
+        '  return (\n' +
+        '    <div className="w-full max-w-4xl mx-auto ">\n' +
+        '      <h1 className="text-3xl font-bold mb-6 text-center text-white">Multi-City Weather Comparison</h1>\n' +
+        '      <CitySearch onAddCity={handleAddCity} selectedCities={selectedCities} />\n' +
+        '      <div className="flex items-center justify-start gap-4 my-4">\n' +
+        '        <label htmlFor="unit" className="text-white font-medium">Units:</label>\n' +
+        '        <select\n' +
+        '          id="unit"\n' +
+        '          value={unit}\n' +
+        "          onChange={e => setUnit(e.target.value as 'metric' | 'imperial')}\n" +
+        '          className="py-1 px-2 rounded bg-white text-gray-800"\n' +
+        '        >\n' +
+        '          <option value="metric">Metric (&deg;C, m/s)</option>\n' +
+        '          <option value="imperial">Imperial (&deg;F, mph)</option>\n' +
+        '        </select>\n' +
+        '      </div>\n' +
+        '      {selectedCities.length < 3 && (\n' +
+        '        <div className="bg-yellow-200 text-yellow-800 py-2 px-4 rounded mb-4 text-center">\n' +
+        '          Please add at least three cities for comparison.\n' +
+        '        </div>\n' +
+        '      )}\n' +
+        '      {error && (\n' +
+        '        <div className="bg-red-500 text-white px-4 py-2 rounded mb-4">\n' +
+        '          {error}\n' +
+        '        </div>\n' +
+        '      )}\n' +
+        '      <WeatherTable\n' +
+        '        cities={selectedCities}\n' +
+        '        weatherData={weatherData}\n' +
+        '        loading={loading}\n' +
+        '        onRemoveCity={handleRemoveCity}\n' +
+        '        unit={unit}\n' +
+        '      />\n' +
+        '    </div>\n' +
+        '  );\n' +
+        '}\n',
+      'client/src/components/CitySearch.tsx': "import React, { useState } from 'react';\n" +
+        'interface CitySearchProps {\n' +
+        '  onAddCity: (city: string) => void;\n' +
+        '  selectedCities: string[];\n' +
+        '}\n' +
+        'const predefinedCities = [\n' +
+        "  'New York', 'London', 'Paris', 'Tokyo', 'Sydney', 'Berlin', 'Moscow', 'Toronto', 'Los Angeles', 'Cape Town', 'Singapore', 'Dubai', 'Beijing', 'Mexico City', 'Istanbul', 'Bangkok', 'Mumbai', 'Chicago', 'São Paulo', 'Madrid',\n" +
+        '];\n' +
+        'export default function CitySearch({ onAddCity, selectedCities }: CitySearchProps) {\n' +
+        "  const [input, setInput] = useState('');\n" +
+        '  const [suggestions, setSuggestions] = useState<string[]>([]);\n' +
+        '  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {\n' +
+        '    setInput(e.target.value);\n' +
+        '    if (e.target.value.length > 1) {\n' +
+        '      const filtered = predefinedCities.filter(\n' +
+        '        city => city.toLowerCase().startsWith(e.target.value.toLowerCase()) &&\n' +
+        '                !selectedCities.includes(city)\n' +
+        '      ).slice(0, 5);\n' +
+        '      setSuggestions(filtered);\n' +
+        '    } else {\n' +
+        '      setSuggestions([]);\n' +
+        '    }\n' +
+        '  };\n' +
+        '  const handleAdd = () => {\n' +
+        '    const city = input.trim();\n' +
+        '    if (city && !selectedCities.includes(city)) {\n' +
+        '      onAddCity(city);\n' +
+        "      setInput('');\n" +
+        '      setSuggestions([]);\n' +
+        '    }\n' +
+        '  };\n' +
+        '  return (\n' +
+        '    <div className="w-full flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-2">\n' +
+        '      <div className="relative w-full md:w-72 ">\n' +
+        '        <input\n' +
+        '          type="text"\n' +
+        '          value={input}\n' +
+        '          onChange={handleInput}\n' +
+        '          placeholder="Enter city name..."\n' +
+        '          className="w-full px-3 py-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-800"\n' + 
+        '          aria-label="City name input"\n' +
+        '        />\n' +
+        '        {suggestions.length > 0 && (\n' +
+        '          <div className="absolute top-full left-0 w-full bg-white rounded shadow-lg z-20">\n' +
+        '            {suggestions.map(city => (\n' +
+        '              <div\n' +
+        '                key={city}\n' +
+        '                tabIndex={0}\n' +
+        '                className="px-3 py-2 cursor-pointer hover:bg-blue-100 text-gray-900"\n' +
+        '                onClick={() => {\n' +
+        '                  setInput(city);\n' +
+        '                  setSuggestions([]);\n' +
+        '                  setTimeout(handleAdd, 100);\n' +
+        '                }}\n' +
+        '              >\n' +
+        '                {city}\n' +
+        '              </div>\n' +
+        '            ))}\n' +
+        '          </div>\n' +
+        '        )}\n' +
+        '      </div>\n' +
+        '      <button\n' +
+        '        type="button"\n' +
+        '        onClick={handleAdd}\n' +
+        '        className="bg-blue-600 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded disabled:opacity-40 disabled:cursor-not-allowed"\n' +
+        '        disabled={!input.trim() || selectedCities.includes(input.trim())}\n' +
+        '      >\n' +
+        '        Add City\n' +
+        '      </button>\n' +
+        '    </div>\n' +
+        '  );\n' +
+        '}\n',
+      'client/src/components/CityItem.tsx': "import React from 'react';\n" +
+        "import { CityWeatherData } from '../types';\n" +
+        'interface CityItemProps {\n' +
+        '  data: CityWeatherData;\n' +
+        "  unit: 'metric' | 'imperial';\n" +
+        '  onRemove: () => void;\n' +
+        '}\n' +
+        'export default function CityItem({ data, unit, onRemove }: CityItemProps) {\n' +
+        "  const tempSuffix = unit === 'metric' ? '°C' : '°F';\n" +
+        "  const windSuffix = unit === 'metric' ? 'm/s' : 'mph';\n" +
+        '  return (\n' +
+        '    <tr className="hover:bg-indigo-100 transition">\n' +
+        '      <td className="p-3 font-semibold text-gray-800 flex items-center gap-2">\n' +
+        '        <span>{data.city}</span>\n' +
+        '        <button\n' +
+        '          onClick={onRemove}\n' +
+        '          className="ml-2 bg-red-500 hover:bg-red-700 text-white rounded p-1"\n' +
+        '          aria-label={`Remove ${data.city}`}\n' +
+        '        >\n' +
+        '          &times;\n' +
+        '        </button>\n' +
+        '      </td>\n' +
+        '      <td className="p-3 text-center">{Math.round(data.temp)}{tempSuffix}</td>\n' +
+        '      <td className="p-3 text-center">{data.humidity}%</td>\n' +
+        '      <td className="p-3 text-center">{data.wind} {windSuffix}</td>\n' +
+        '      <td className="p-3 text-center capitalize">{data.condition}</td>\n' +
+        '    </tr>\n' +
+        '  );\n' +
+        '}\n',
+      'client/src/components/WeatherTable.tsx': "import React from 'react';\n" +
+        "import { CityWeatherData } from '../types';\n" +
+        "import CityItem from './CityItem';\n" +
+        'interface WeatherTableProps {\n' +
+        '  cities: string[];\n' +
+        '  weatherData: CityWeatherData[];\n' +
+        '  loading: boolean;\n' +
+        '  onRemoveCity: (city: string) => void;\n' +
+        "  unit: 'metric' | 'imperial';\n" +
+        '}\n' +
+        'export default function WeatherTable({ cities, weatherData, loading, onRemoveCity, unit }: WeatherTableProps) {\n' +
+        '  if (loading) {\n' +
+        '    return (\n' +
+        '      <div className="flex justify-center my-8">\n' +
+        '        <span className="text-lg animate-pulse text-white">Loading weather data...</span>\n' +
+        '      </div>\n' +
+        '    );\n' +
+        '  }\n' +
+        '  if (cities.length < 3) return null;\n' +
+        '  return (\n' +
+        '    <div className="overflow-x-auto mt-6 rounded-lg shadow-lg">\n' +
+        '      <table className="min-w-full bg-white border border-gray-200">\n' +
+        '        <thead>\n' +
+        '          <tr className="bg-indigo-700 text-white">\n' +
+        '            <th className="p-3 text-left">City</th>\n' +
+        '            <th className="p-3">Temperature</th>\n' +
+        '            <th className="p-3">Humidity</th>\n' +
+        '            <th className="p-3">Wind Speed</th>\n' +
+        '            <th className="p-3">Conditions</th>\n' +
+        '          </tr>\n' +
+        '        </thead>\n' +
+        '        <tbody>\n' +
+        '          {weatherData.map(cityData => (\n' +
+        '            <CityItem\n' +
+        '              key={cityData.city}\n' +
+        '              data={cityData}\n' +
+        '              unit={unit}\n' +
+        '              onRemove={() => onRemoveCity(cityData.city)}\n' +
+        '            />\n' +
+        '          ))}\n' +
+        '        </tbody>\n' +
+        '      </table>\n' +
+        '      {weatherData.length < cities.length && (\n' +
+        '        <div className="bg-yellow-100 text-yellow-700 text-sm p-2 text-center">\n' +
+        '          Some cities could not be loaded. Please check the city names or try again.\n' +
+        '        </div>\n' +
+        '      )}\n' +
+        '    </div>\n' +
+        '  );\n' +
+        '}\n',
+      'client/src/types.ts': 'export interface CityWeatherData {\n' +
+        '  city: string;\n' +
+        '  temp: number;\n' +
+        '  humidity: number;\n' +
+        '  wind: number;\n' +
+        '  condition: string;\n' +
+        '}\n',
+      'client/src/services/weatherService.ts': "import axios from 'axios';\n" +
+        "import { CityWeatherData } from '../types';\n" +
+        "const API_BASE = import.meta.env.VITE_BACKEND_URL || '/api';\n" +
+        "export async function fetchWeatherForCities(cities: string[], unit: 'metric' | 'imperial'): Promise<CityWeatherData[]> {\n" +
+        '  if (cities.length < 3) return [];\n' +
+        '  try {\n' +
+        '    const res = await axios.get(`${API_BASE}/weather/compare`, {\n' +
+        '      params: {\n' +
+        "        cities: cities.join(','),\n" +
+        '        unit\n' +
+        '      }\n' +
+        '    });\n' +
+        '    return res.data.cities;\n' +
+        '  } catch (e: any) {\n' +
+        "    throw new Error(e.response?.data?.error || 'Failed to fetch weather');\n" +
+        '  }\n' +
+        '}\n',
+      'client/src/utils/format.ts': 'export function capitalize(str: string) {\n' +
+        '  return str.charAt(0).toUpperCase() + str.slice(1);\n' +
+        '}\n',
+      'client/.env.example': 'VITE_BACKEND_URL=\n',
+      'client/.env': 'VITE_BACKEND_URL=http://localhost:3001/api\n',
+      'client/__tests__/WeatherTable.test.tsx': "import React from 'react';\n" +
+        "import { render, screen } from '@testing-library/react';\n" +
+        "import WeatherTable from '../src/components/WeatherTable';\n" +
+        'const weatherData = [\n' +
+        "  { city: 'London', temp: 21, humidity: 60, wind: 5, condition: 'cloudy' },\n" +
+        "  { city: 'Paris', temp: 23, humidity: 52, wind: 6, condition: 'clear' },\n" +
+        "  { city: 'Tokyo', temp: 26, humidity: 71, wind: 8, condition: 'rain' },\n" +
+        '];\n' +
+        "describe('WeatherTable', () => {\n" +
+        "  it('renders weather data table', () => {\n" +
+        '    render(\n' +
+        '      <WeatherTable\n' +
+        '        cities={["London", "Paris", "Tokyo"]}\n' +
+        '        weatherData={weatherData}\n' +
+        '        loading={false}\n' +
+        '        onRemoveCity={() => {}}\n' +
+        '        unit="metric"\n' +
+        '      />\n' +
+        '    );\n' +
+        "    expect(screen.getByText('London')).toBeInTheDocument();\n" +
+        "    expect(screen.getByText('Paris')).toBeInTheDocument();\n" +
+        "    expect(screen.getByText('Tokyo')).toBeInTheDocument();\n" +
+        '    expect(screen.getAllByText(/°C/).length).toBeGreaterThan(0);\n' +
+        '  });\n' +
+        "  it('shows loading when loading', () => {\n" +
+        '    render(\n' +
+        '      <WeatherTable\n' +
+        '        cities={["London", "Paris", "Tokyo"]}\n' +
+        '        weatherData={weatherData}\n' +
+        '        loading={true}\n' +
+        '        onRemoveCity={() => {}}\n' +
+        '        unit="metric"\n' +
+        '      />\n' +
+        '    );\n' +
+        '    expect(screen.getByText(/loading weather data/i)).toBeInTheDocument();\n' +
+        '  });\n' +
+        '});\n',
+      'client/__tests__/CitySearch.test.tsx': "import React from 'react';\n" +
+        "import { render, screen, fireEvent } from '@testing-library/react';\n" +
+        "import CitySearch from '../src/components/CitySearch';\n" +
+        "describe('CitySearch', () => {\n" +
+        "  it('calls onAddCity when add button is clicked', () => {\n" +
+        '    const onAddCity = jest.fn();\n' +
+        '    render(<CitySearch onAddCity={onAddCity} selectedCities={[]} />);\n' +
+        '    const input = screen.getByLabelText(/city name input/i);\n' +
+        "    fireEvent.change(input, { target: { value: 'London' } });\n" +
+        '    fireEvent.click(screen.getByText(/add city/i));\n' +
+        "    expect(onAddCity).toHaveBeenCalledWith('London');\n" +
+        '  });\n' +
+        '});\n',
+      'client/__tests__/WeatherService.test.ts': "import { rest } from 'msw';\n" +
+        "import { setupServer } from 'msw/node';\n" +
+        "import { fetchWeatherForCities } from '../src/services/weatherService';\n" +
+        'const server = setupServer(\n' +
+        "  rest.get('http://localhost:3001/api/weather/compare', (req, res, ctx) => {\n" +
+        '    return res(\n' +
+        '      ctx.json({\n' +
+        '        cities: [\n' +
+        "          { city: 'London', temp: 20, humidity: 60, wind: 4, condition: 'Cloudy' },\n" +
+        "          { city: 'Paris', temp: 22, humidity: 58, wind: 3, condition: 'Sunny' },\n" +
+        "          { city: 'Berlin', temp: 19, humidity: 67, wind: 5, condition: 'Rain' }\n" +
+        '        ]\n' +
+        '      })\n' +
+        '    );\n' +
+        '  })\n' +
+        ');\n' +
+        'beforeAll(() => server.listen());\n' +
+        'afterEach(() => server.resetHandlers());\n' +
+        'afterAll(() => server.close());\n' +
+        "describe('weatherService', () => {\n" +
+        "  it('fetches weather data for cities', async () => {\n" +
+        "    const cities = ['London', 'Paris', 'Berlin'];\n" +
+        "    const data = await fetchWeatherForCities(cities, 'metric');\n" +
+        "    expect(data[0].city).toBe('London');\n" +
+        '    expect(data.length).toBe(3);\n' +
+        '  });\n' +
+        '});\n',
+      'server/package.json': '{\n' +
+        '  "name": "server",\n' +
+        '  "version": "1.0.0",\n' +
+        '  "main": "dist/server.js",\n' +
+        '  "type": "module",\n' +
+        '  "scripts": {\n' +
+        '    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",\n' +
+        '    "build": "tsc",\n' +
+        '    "start": "node dist/server.js",\n' +
+        '    "test": "jest"\n' +
+        '  }\n' +
+        '}\n',
+      'server/tsconfig.json': '{\n' +
+        '  "compilerOptions": {\n' +
+        '    "target": "ES2020",\n' +
+        '    "module": "CommonJS",\n' +
+        '    "rootDir": "src",\n' +
+        '    "outDir": "dist",\n' +
+        '    "strict": true,\n' +
+        '    "esModuleInterop": true,\n' +
+        '    "skipLibCheck": true\n' +
+        '  },\n' +
+        '  "include": ["src"],\n' +
+        '  "exclude": ["node_modules"]\n' +
+        '}\n',
+      'server/.env.example': 'OPENWEATHERMAP_API_KEY=\nBACKEND_PORT=\n',
+      'server/.env': 'OPENWEATHERMAP_API_KEY=INSERT_YOUR_OWN_KEY\nBACKEND_PORT=3001\n',
+      'server/src/server.ts': "import express from 'express';\n" +
+        "import cors from 'cors';\n" +
+        "import dotenv from 'dotenv';\n" +
+        "import weatherRoutes from './routes/weatherRoutes';\n" +
+        'dotenv.config();\n' +
+        'const app = express();\n' +
+        'const PORT = process.env.BACKEND_PORT || 3001;\n' +
+        'app.use(cors({ origin: true }));\n' +
+        'app.use(express.json());\n' +
+        "app.use('/api/weather', weatherRoutes);\n" +
+        "app.get('/api/healthz', (_req, res) => res.send({ status: 'ok' }));\n" +
+        '// Global error handler\n' +
+        'app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {\n' +
+        '  if (err.status && err.message) {\n' +
+        '    res.status(err.status).json({ error: err.message });\n' +
+        '  } else {\n' +
+        "    res.status(500).json({ error: 'Internal Server Error' });\n" +
+        '  }\n' +
+        '});\n' +
+        'app.listen(PORT, () => {\n' +
+        '  console.log(`Weather backend running on http://localhost:${PORT}`);\n' +
+        '});\n',
+      'server/src/routes/weatherRoutes.ts': "import { Router } from 'express';\n" +
+        "import { compareWeather } from '../controllers/weatherController';\n" +
+        'const router = Router();\n' +
+        "router.get('/compare', compareWeather);\n" +
+        'export default router;\n',
+      'server/src/controllers/weatherController.ts': "import { Request, Response, NextFunction } from 'express';\n" +
+        "import { getWeatherForCities } from '../services/weatherService';\n" +
+        'export async function compareWeather(req: Request, res: Response, next: NextFunction) {\n' +
+        '  try {\n' +
+        '    const qCities = req.query.cities as string;\n' +
+        "    const unit = (req.query.unit as string) || 'metric';\n" +
+        '    if (!qCities || !qCities.trim()) {\n' +
+        "      return res.status(400).json({ error: 'cities query param is required' });\n" +
+        '    }\n' +
+        "    const cityArr = qCities.split(',').map(c => c.trim()).filter(Boolean);\n" +
+        '    if (cityArr.length < 3) {\n' +
+        "      return res.status(400).json({ error: 'Provide at least three cities' });\n" +
+        '    }\n' +
+        '    const weatherResults = await getWeatherForCities(cityArr, unit);\n' +
+        '    res.json({ cities: weatherResults });\n' +
+        '  } catch (error) {\n' +
+        '    next(error);\n' +
+        '  }\n' +
+        '}\n',
+      'server/src/services/weatherService.ts': "import axios from 'axios';\n" +
+        'interface ApiWeatherResponse {\n' +
+        '  name: string;\n' +
+        '  main: { temp: number; humidity: number; };\n' +
+        '  wind: { speed: number; };\n' +
+        '  weather: { main: string; description: string; }[];\n' +
+        '}\n' +
+        'interface CityWeatherData {\n' +
+        '  city: string;\n' +
+        '  temp: number;\n' +
+        '  humidity: number;\n' +
+        '  wind: number;\n' +
+        '  condition: string;\n' +
+        '}\n' +
+        'const API_KEY = process.env.OPENWEATHERMAP_API_KEY;\n' +
+        "const API_BASE = 'https://api.openweathermap.org/data/2.5/weather';\n" +
+        "export async function getWeatherForCities(cities: string[], unit: 'metric' | 'imperial'): Promise<CityWeatherData[]> {\n" +
+        '  const results: CityWeatherData[] = [];\n' +
+        '  const proms = cities.map(async city => {\n' +
+        '    try {\n' +
+        '      const resp = await axios.get<ApiWeatherResponse>(API_BASE, {\n' +
+        '        params: {\n' +
+        '          q: city,\n' +
+        '          appid: API_KEY,\n' +
+        '          units: unit,\n' +
+        '        }\n' +
+        '      });\n' +
+        '      results.push({\n' +
+        '        city: resp.data.name,\n' +
+        '        temp: resp.data.main.temp,\n' +
+        '        humidity: resp.data.main.humidity,\n' +
+        '        wind: resp.data.wind.speed,\n' +
+        '        condition: resp.data.weather[0].main,\n' +
+        '      });\n' +
+        '    } catch (e: any) {\n' +
+        '      // Skip the city on error\n' +
+        '    }\n' +
+        '  });\n' +
+        '  await Promise.all(proms);\n' +
+        '  return results;\n' +
+        '}\n',
+      'server/tests/weather.test.ts': "import request from 'supertest';\n" +
+        "import express, { Express } from 'express';\n" +
+        "import weatherRoutes from '../src/routes/weatherRoutes';\n" +
+        "describe('/api/weather/compare', () => {\n" +
+        '  let app: Express;\n' +
+        '  beforeAll(() => {\n' +
+        '    app = express();\n' +
+        '    app.use(express.json());\n' +
+        "    app.use('/api/weather', weatherRoutes);\n" +
+        '  });\n' +
+        "  it('should return weather data for 3 cities', async () => {\n" +
+        '    const response = await request(app)\n' +
+        "      .get('/api/weather/compare?cities=London,Paris,Berlin&unit=metric');\n" +
+        '    expect(response.status).toBe(200);\n' +
+        '    expect(Array.isArray(response.body.cities)).toBe(true);\n' +
+        '    expect(response.body.cities.length).toBeGreaterThanOrEqual(0);\n' +
+        '  });\n' +
+        "  it('should return 400 if less than 3 cities', async () => {\n" +
+        "    const response = await request(app).get('/api/weather/compare?cities=London,Paris');\n" +
+        '    expect(response.status).toBe(400);\n' +
+        '    expect(response.body.error).toMatch(/three cities/i);\n' +
+        '  });\n' +
+        "  it('should return 400 if no cities provided', async () => {\n" +
+        "    const response = await request(app).get('/api/weather/compare');\n" +
+        '    expect(response.status).toBe(400);\n' +
+        '  });\n' +
+        '});\n'
+    }
+  },
+  tests: {
+    fileMap: {
+      'client/__tests__/WeatherTable.test.tsx': "import React from 'react';\n" +
+        "import { render, screen } from '@testing-library/react';\n" +
+        "import WeatherTable from '../src/components/WeatherTable';\n" +
+        'const weatherData = [\n' +
+        "  { city: 'London', temp: 21, humidity: 60, wind: 5, condition: 'cloudy' },\n" +
+        "  { city: 'Paris', temp: 23, humidity: 52, wind: 6, condition: 'clear' },\n" +
+        "  { city: 'Tokyo', temp: 26, humidity: 71, wind: 8, condition: 'rain' },\n" +
+        '];\n' +
+        "describe('WeatherTable', () => {\n" +
+        "  it('renders weather data table', () => {\n" +
+        '    render(\n' +
+        '      <WeatherTable\n' +
+        '        cities={["London", "Paris", "Tokyo"]}\n' +
+        '        weatherData={weatherData}\n' +
+        '        loading={false}\n' +
+        '        onRemoveCity={() => {}}\n' +
+        '        unit="metric"\n' +
+        '      />\n' +
+        '    );\n' +
+        "    expect(screen.getByText('London')).toBeInTheDocument();\n" +
+        "    expect(screen.getByText('Paris')).toBeInTheDocument();\n" +
+        "    expect(screen.getByText('Tokyo')).toBeInTheDocument();\n" +
+        '    expect(screen.getAllByText(/°C/).length).toBeGreaterThan(0);\n' +
+        '  });\n' +
+        "  it('shows loading when loading', () => {\n" +
+        '    render(\n' +
+        '      <WeatherTable\n' +
+        '        cities={["London", "Paris", "Tokyo"]}\n' +
+        '        weatherData={weatherData}\n' +
+        '        loading={true}\n' +
+        '        onRemoveCity={() => {}}\n' +
+        '        unit="metric"\n' +
+        '      />\n' +
+        '    );\n' +
+        '    expect(screen.getByText(/loading weather data/i)).toBeInTheDocument();\n' +
+        '  });\n' +
+        '});\n',
+      'client/__tests__/CitySearch.test.tsx': "import React from 'react';\n" +
+        "import { render, screen, fireEvent } from '@testing-library/react';\n" +
+        "import CitySearch from '../src/components/CitySearch';\n" +
+        "describe('CitySearch', () => {\n" +
+        "  it('calls onAddCity when add button is clicked', () => {\n" +
+        '    const onAddCity = jest.fn();\n' +
+        '    render(<CitySearch onAddCity={onAddCity} selectedCities={[]} />);\n' +
+        '    const input = screen.getByLabelText(/city name input/i);\n' +
+        "    fireEvent.change(input, { target: { value: 'London' } });\n" +
+        '    fireEvent.click(screen.getByText(/add city/i));\n' +
+        "    expect(onAddCity).toHaveBeenCalledWith('London');\n" +
+        '  });\n' +
+        '});\n',
+      'client/__tests__/WeatherService.test.ts': "import { rest } from 'msw';\n" +
+        "import { setupServer } from 'msw/node';\n" +
+        "import { fetchWeatherForCities } from '../src/services/weatherService';\n" +
+        'const server = setupServer(\n' +
+        "  rest.get('http://localhost:3001/api/weather/compare', (req, res, ctx) => {\n" +
+        '    return res(\n' +
+        '      ctx.json({\n' +
+        '        cities: [\n' +
+        "          { city: 'London', temp: 20, humidity: 60, wind: 4, condition: 'Cloudy' },\n" +
+        "          { city: 'Paris', temp: 22, humidity: 58, wind: 3, condition: 'Sunny' },\n" +
+        "          { city: 'Berlin', temp: 19, humidity: 67, wind: 5, condition: 'Rain' }\n" +
+        '        ]\n' +
+        '      })\n' +
+        '    );\n' +
+        '  })\n' +
+        ');\n' +
+        'beforeAll(() => server.listen());\n' +
+        'afterEach(() => server.resetHandlers());\n' +
+        'afterAll(() => server.close());\n' +
+        "describe('weatherService', () => {\n" +
+        "  it('fetches weather data for cities', async () => {\n" +
+        "    const cities = ['London', 'Paris', 'Berlin'];\n" +
+        "    const data = await fetchWeatherForCities(cities, 'metric');\n" +
+        "    expect(data[0].city).toBe('London');\n" +
+        '    expect(data.length).toBe(3);\n' +
+        '  });\n' +
+        '});\n',
+      'server/tests/weather.test.ts': "import request from 'supertest';\n" +
+        "import express, { Express } from 'express';\n" +
+        "import weatherRoutes from '../src/routes/weatherRoutes';\n" +
+        "describe('/api/weather/compare', () => {\n" +
+        '  let app: Express;\n' +
+        '  beforeAll(() => {\n' +
+        '    app = express();\n' +
+        '    app.use(express.json());\n' +
+        "    app.use('/api/weather', weatherRoutes);\n" +
+        '  });\n' +
+        "  it('should return weather data for 3 cities', async () => {\n" +
+        '    const response = await request(app)\n' +
+        "      .get('/api/weather/compare?cities=London,Paris,Berlin&unit=metric');\n" +
+        '    expect(response.status).toBe(200);\n' +
+        '    expect(Array.isArray(response.body.cities)).toBe(true);\n' +
+        '    expect(response.body.cities.length).toBeGreaterThanOrEqual(0);\n' +
+        '  });\n' +
+        "  it('should return 400 if less than 3 cities', async () => {\n" +
+        "    const response = await request(app).get('/api/weather/compare?cities=London,Paris');\n" +
+        '    expect(response.status).toBe(400);\n' +
+        '    expect(response.body.error).toMatch(/three cities/i);\n' +
+        '  });\n' +
+        "  it('should return 400 if no cities provided', async () => {\n" +
+        "    const response = await request(app).get('/api/weather/compare');\n" +
+        '    expect(response.status).toBe(400);\n' +
+        '  });\n' +
+        '});\n'
+    }
+  },
+  env: {
+    'client/.env': 'VITE_BACKEND_URL=http://localhost:3001/api\n',
+    'client/.env.example': 'VITE_BACKEND_URL=\n',
+    'server/.env': 'OPENWEATHERMAP_API_KEY=INSERT_YOUR_OWN_KEY\nBACKEND_PORT=3001\n',
+    'server/.env.example': 'OPENWEATHERMAP_API_KEY=\nBACKEND_PORT=\n'
+  },
+  git: {
+    branchName: 'feature/WEAT-1-implement-multi-city-weather-comparison-table',
+    commitMessage: '[WEAT-1] Implement Multi-City Weather Comparison Table',
+    prDescription: {
+      summary: 'Implemented a multi-city weather comparison table allowing users to view weather data for 3+ cities simultaneously. Fetches data from the OpenWeatherMap API and displays it in a tabular format. Added CitySearch component for adding cities to the comparison.',
+      filesChanged: [Array],
+      jiraLink: 'https://yorkhackathonteam15.atlassian.net/browse/WEAT-1'
+    }
+  },
+  jiraComment: {
+    qaTestSteps: [
+      '1. Go to the Compare Page.',
+      '2. Add at least three cities using the City Search component.',
+      '3. Verify that the weather data (temperature, humidity, wind speed, conditions) is displayed correctly for each city in the comparison table.',
+      '4. Add and remove cities to ensure the table updates dynamically.',
+      '5. Test with different city names (including invalid names) to verify error handling.',
+      '6. Test with different units (metric/imperial) if implemented.'
+    ],
+    peerReviewChecklist: [
+      '✅ Code follows lint rules (ESLint, Prettier).',
+      '✅ Handles edge cases (e.g., invalid city names, API errors).',
+      '✅ Test coverage ≥80%.',
+      '✅ API key is securely stored and not exposed.',
+      '✅ UI is responsive and user-friendly.',
+      '✅ Error handling is implemented appropriately.'
+    ],
+    recommendedTransition: 'To Do → Code Review'
+  }
+}

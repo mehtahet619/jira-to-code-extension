@@ -1,0 +1,102 @@
+### 📌 1. Feature Overview
+- **Feature:** Multi-City Weather Comparison Table
+- **Description:** This feature allows users to input a list of cities and view a comparative table displaying current weather conditions for each. The data will be sourced from the OpenWeatherMap API.
+- **Importance:** Provides users with a quick and convenient way to compare weather conditions across multiple locations, aiding in travel planning, event scheduling, or general awareness.
+- **Users:** Individuals interested in weather information, travelers, event planners, or anyone needing to compare conditions in different cities.
+- **Goals:**
+    - Enable users to easily add and remove cities for comparison.
+    - Display key weather metrics (temperature, humidity, wind speed, condition) in a clear, tabular format.
+    - Provide a responsive and user-friendly experience across different devices.
+    - Leverage a reliable weather API (OpenWeatherMap) for accurate data.
+
+---
+
+### 🧱 2. Recommended Tech Stack
+- **Frontend:** React with Vite + Tailwind CSS.  React provides a component-based architecture for building a dynamic UI. Vite offers fast build times and a modern development experience. Tailwind CSS enables rapid UI development with a utility-first approach.
+- **Backend:** Node.js + Express. Node.js is JavaScript runtime, allowing for full-stack JavaScript development. Express is a minimalist web framework for Node.js, simplifying API creation.
+- **Database:**  None required for this initial implementation. Weather data is fetched on demand from the API and doesn’t need persistent storage.
+- **External APIs:** OpenWeatherMap API. This provides current weather data for cities worldwide.
+- **Dev Tools/Libraries:**
+    - Axios or Fetch API: For making HTTP requests to the OpenWeatherMap API.
+    - React Icons: For adding weather-related icons to the UI.
+    - Zustand or Redux Toolkit: For state management, especially as the number of cities increases.
+- **Testing Tools:** Jest and React Testing Library for frontend testing, Supertest for backend API testing.
+- **Hosting/Deployment:** Vercel for the frontend (easy React deployment) and Railway or Render for the backend (Node.js deployment).
+
+---
+
+### 📁 3. Project Structure
+- **Frontend (./frontend):**
+    - `src/`: Contains all source code.
+        - `components/`: Reusable UI components (e.g., `CityInput`, `WeatherCard`, `WeatherTable`).
+        - `pages/`:  Top-level pages (e.g., `ComparisonPage`).
+        - `services/`:  Functions for interacting with the backend API (e.g., `weatherService.js`).
+        - `styles/`: Global styles and Tailwind configuration.
+        - `App.js`: Main application component.
+        - `main.jsx`: Entry point for the React application.
+- **Backend (./backend):**
+    - `src/`: Contains all source code.
+        - `routes/`: Defines API routes (e.g., `weatherRoutes.js`).
+        - `controllers/`: Handles request logic (e.g., `weatherController.js`).
+        - `models/`: (Not needed for this version, but could be used for caching).
+        - `config/`: Configuration files (e.g., `.env` loading).
+        - `server.js`: Entry point for the Node.js server.
+- **Shared (./shared):**
+    - `types/`: TypeScript type definitions (if using TypeScript) for data structures like weather data.
+
+---
+
+### 🏗️ 4. Feature Flow Breakdown
+- **Backend Endpoints:**
+    - `GET /weather`:  Accepts an array of city names as a query parameter. Returns an array of weather data objects for each city.
+- **Frontend Pages/Screens:**
+    - `ComparisonPage`: The main page where users input cities and view the comparison table.
+- **Frontend Components:**
+    - `CityInput`:  Allows users to add cities to the comparison list.
+    - `WeatherTable`: Displays the weather data in a tabular format.
+    - `WeatherCard`: Displays weather information for a single city (used within the table).
+    - `LoadingSpinner`: Displays a loading indicator while fetching data.
+- **Data Flow:**
+    1. User enters city names in the `CityInput` component.
+    2. The `ComparisonPage` component collects the city names.
+    3. The `ComparisonPage` component makes a `GET` request to the `/weather` endpoint on the backend, passing the city names as a query parameter.
+    4. The backend fetches weather data from the OpenWeatherMap API for each city.
+    5. The backend returns the weather data to the frontend.
+    6. The `ComparisonPage` component receives the data and renders it using the `WeatherTable` and `WeatherCard` components.
+- **API Requests:**
+    - Frontend to Backend: `GET /weather?cities=city1,city2,city3`
+
+---
+
+### 🔌 5. API + Integration Requirements
+- **External API:** OpenWeatherMap API
+    - **Endpoint:** `https://api.openweathermap.org/data/2.5/weather`
+    - **Input:**
+        - `q`: City name (e.g., `London`).
+        - `appid`: Your OpenWeatherMap API key.
+        - `units`: `metric` for Celsius, `imperial` for Fahrenheit.
+    - **Output:** JSON response containing weather data (temperature, humidity, wind speed, condition, etc.).
+    - **Limits/Rate Limits:** OpenWeatherMap has rate limits.  Implement error handling and potentially caching to mitigate these.  Check the OpenWeatherMap documentation for current limits.
+    - **API Key:** Required. Store securely as an environment variable.
+
+---
+
+### 🔒 6. Authentication & Authorization (If applicable)
+- Authentication and authorization are not required for this initial implementation. The API is publicly accessible.  If future features require user accounts or data persistence, authentication will need to be added.
+
+---
+
+### 📦 7. Environment Variables & Configuration
+- **`.env` Variables:**
+    - `OPENWEATHERMAP_API_KEY`: Your OpenWeatherMap API key.
+    - `BACKEND_PORT`: Port number for the backend server (e.g., `3001`).
+    - `FRONTEND_URL`: URL of the frontend application (used for CORS configuration if needed).
+- **Usage:**
+    - The `OPENWEATHERMAP_API_KEY` will be used in the backend to authenticate requests to the OpenWeatherMap API.     
+    - `BACKEND_PORT` will be used to configure the Node.js server.
+- **Security:**
+    - Store the `.env` file securely and do not commit it to version control.
+    - Use a library like `dotenv` to load environment variables from the `.env` file.
+    - In production, use environment variables provided by the hosting platform (e.g., Vercel, Railway).
+
+---

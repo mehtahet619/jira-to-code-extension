@@ -1,0 +1,162 @@
+📌 1. Feature Overview
+- **Explanation:** This feature adds a multi-city weather comparison table to the application. Users will be able to select multiple cities (at least three) and view key weather metrics (temperature, humidity, wind speed, conditions) side-by-side in a tabular format.
+- **Importance:** This enhances the user experience by allowing for quick and easy comparison of weather conditions across different locations, making the application more valuable for travel planning, decision-making, or general weather awareness.
+- **Users:**  General users of the weather application, particularly those interested in comparing weather conditions across multiple locations.      
+- **Goals:**
+    - Provide a clear and concise comparison of weather data.
+    - Allow users to easily add and remove cities from the comparison.
+    - Ensure data accuracy and timely updates.
+    - Deliver a responsive and user-friendly interface.
+
+---
+
+### 🧱 2. Recommended Tech Stack
+- **Frontend:** React with Vite + Tailwind CSS.  React provides a component-based architecture for building a dynamic UI. Vite offers fast build times and a modern development experience. Tailwind CSS enables rapid UI development with a utility-first approach.
+- **Backend:** Node.js + Express. Node.js is JavaScript runtime, allowing for full-stack JavaScript development. Express is a minimalist web framework for Node.js, providing routing and middleware capabilities.
+- **Database:**  Not required for this feature. Weather data will be fetched directly from the OpenWeatherMap API and not stored persistently.        
+- **External APIs/Integrations:** OpenWeatherMap API. This API provides current weather data for cities worldwide.
+- **Dev Tools/Libraries/Testing:**
+    - **Axios:** For making HTTP requests to the OpenWeatherMap API.
+    - **Jest & React Testing Library:** For unit and integration testing of React components.
+    - **Supertest:** For testing backend API endpoints.
+    - **ESLint & Prettier:** For code linting and formatting.
+    - **Git:** For version control.
+
+---
+
+### 📁 3. Project Structure
+- **Frontend (src folder):**
+    - `pages`: Contains the main application pages (e.g., `ComparePage.jsx`).
+    - `components`: Reusable UI components (e.g., `WeatherTable.jsx`, `CitySearch.jsx`, `CityItem.jsx`).
+    - `services`:  Contains functions for interacting with the backend API (e.g., `weatherService.js`).
+    - `utils`: Utility functions (e.g., date formatting, data transformation).
+    - `styles`: Global styles and Tailwind configuration.
+    - `App.jsx`: The main application component.
+    - `main.jsx`: Entry point for the frontend application.
+- **Backend (server folder):**
+    - `routes`: Defines API routes (e.g., `weatherRoutes.js`).
+    - `controllers`: Contains logic for handling API requests (e.g., `weatherController.js`).
+    - `models`:  Not needed for this feature, as no database interaction is required.
+    - `config`: Configuration files (e.g., `.env` file loading, API key management).
+    - `server.js`: The main server file.
+
+---
+
+### 🏗️ 4. Feature Flow Breakdown
+- **Backend Endpoints:**
+    - `GET /api/weather/compare`: Accepts an array of city names as a query parameter.  Fetches weather data for each city from the OpenWeatherMap API and returns a combined JSON response.
+- **Frontend Pages/Screens:**
+    - `ComparePage`:  The main page for the multi-city comparison feature.
+- **Frontend Components:**
+    - `CitySearch`:  Allows users to search for and add cities to the comparison.
+    - `CityItem`: Displays a single city in the comparison table.
+    - `WeatherTable`:  Displays the weather data for all selected cities in a tabular format.
+- **Data Flow:**
+    1. User interacts with `CitySearch` to add cities.
+    2. `ComparePage` maintains a list of selected cities.
+    3. When the user requests a comparison, `ComparePage` calls the `/api/weather/compare` endpoint with the list of cities.
+    4. Backend fetches data from OpenWeatherMap for each city.
+    5. Backend returns a JSON response containing the weather data for all cities.
+    6. `ComparePage` receives the data and renders it using the `WeatherTable` and `CityItem` components.
+- **API Requests:**
+    - Frontend makes a `GET` request to `/api/weather/compare?cities=city1,city2,city3`.
+
+---
+
+### 🔌 5. API + Integration Requirements
+- **External API:** OpenWeatherMap API
+    - **Endpoint:** `https://api.openweathermap.org/data/2.5/weather`
+    - **Input:**
+        - `q`: City name (e.g., "London").
+        - `appid`: Your OpenWeatherMap API key.
+        - `units`:  "metric" or "imperial" for temperature units.
+    - **Output:** JSON response containing weather data (temperature, humidity, wind speed, conditions, etc.).
+    - **Limits/Rate Limits:** OpenWeatherMap has rate limits.  Check their documentation for current limits.  Implement error handling and potentially caching to mitigate rate limiting issues.
+    - **API Key:** Required. Store securely as an environment variable.
+
+---
+
+### 🔒 6. Authentication & Authorization (If applicable)
+- No authentication or authorization is required for this feature. The weather data is publicly available.
+
+---
+
+### 📦 7. Environment Variables & Configuration
+- `.env` variables:
+    - `OPENWEATHERMAP_API_KEY`: Your OpenWeatherMap API key.
+    - `BACKEND_PORT`: Port number for the backend server (e.g., 3001).
+    - `FRONTEND_PORT`: Port number for the frontend server (e.g., 5173).
+- Usage:
+    - The `OPENWEATHERMAP_API_KEY` will be used in the backend to authenticate requests to the OpenWeatherMap API.
+    - `BACKEND_PORT` and `FRONTEND_PORT` will be used to configure the server and frontend applications, respectively.
+- Security:
+    - Store the `.env` file securely and do not commit it to version control.
+    - Use a secrets management system in production environments.
+
+---
+
+### 🧪 9. Testing Strategy
+- **Unit Tests:** Test individual React components (e.g., `WeatherTable`, `CityItem`) to ensure they render correctly and handle data appropriately. Use Jest and React Testing Library.
+- **Integration Tests:** Test the interaction between components and the `weatherService.js` to ensure data is fetched and displayed correctly.       
+- **API Tests:** Test the backend API endpoint (`/api/weather/compare`) to ensure it correctly fetches data from the OpenWeatherMap API and returns the expected response. Use Supertest.
+- **Manual Testing:**  Manually test the feature in a browser to verify the user interface and overall functionality.
+- **Test Coverage:** Aim for at least 80% test coverage.
+
+---
+
+### 10. Git & Collaboration Automation
+- **Branch name:** `feature/WEAT-1-implement-multi-city-weather-comparison-table`
+- **Commit message and PR:**
+    - **Title**: `[WEAT-1] Implement Multi-City Weather Comparison Table`
+    - **Description**:
+        - Implemented a multi-city weather comparison table allowing users to view weather data for 3+ cities simultaneously.
+        - Fetches data from the OpenWeatherMap API and displays it in a tabular format.
+        - Added CitySearch component for adding cities to the comparison.
+        - Files created/modified:
+            - `frontend/src/pages/ComparePage.jsx`
+            - `frontend/src/components/WeatherTable.jsx`
+            - `frontend/src/components/CitySearch.jsx`
+            - `frontend/src/components/CityItem.jsx`
+            - `frontend/src/services/weatherService.js`
+            - `backend/routes/weatherRoutes.js`
+            - `backend/controllers/weatherController.js`
+        - Link to original Jira ticket: https://yorkhackathonteam15.atlassian.net/browse/WEAT-1
+
+---
+
+### 11. Jira Ticket Enhancements
+**Comment for Jira Ticket WEAT-1:**
+
+Hi Team,
+
+Here are some QA test steps and a peer review checklist for this feature:
+
+**QA Test Steps:**
+1. Go to the Compare Page.
+2. Add at least three cities using the City Search component.
+3. Verify that the weather data (temperature, humidity, wind speed, conditions) is displayed correctly for each city in the comparison table.
+4. Add and remove cities to ensure the table updates dynamically.
+5. Test with different city names (including invalid names) to verify error handling.
+6. Test with different units (metric/imperial) if implemented.
+
+**Peer Review Checklist:**
+✅ Code follows lint rules (ESLint, Prettier).
+✅ Handles edge cases (e.g., invalid city names, API errors).
+✅ Test coverage ≥80%.
+✅ API key is securely stored and not exposed.
+✅ UI is responsive and user-friendly.
+✅ Error handling is implemented appropriately.
+
+Recommendation: Transition ticket to **Code Review**.
+
+---
+
+### 🌟 12. Optional Enhancements
+- **Search/Filter:** Implement a more robust search functionality with auto-completion and filtering options.
+- **Caching:** Implement caching on the backend to reduce API calls and improve performance.
+- **Error Boundaries:** Add error boundaries in the frontend to gracefully handle unexpected errors.
+- **Responsive Design:** Ensure the comparison table is responsive and adapts to different screen sizes.
+- **CI/CD Setup:** Set up a CI/CD pipeline to automate the build, testing, and deployment process.
+- **Accessibility Considerations:** Ensure the feature is accessible to users with disabilities (e.g., using ARIA attributes).
+- **Geolocation:** Allow users to automatically detect their current location and add it to the comparison.
+- **Weather Forecast:** Extend the feature to display weather forecasts for each city.
