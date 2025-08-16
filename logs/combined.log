@@ -343,3 +343,13 @@
   }
 }
 [13-07-2025 05:39:17 PM] INFO: 🛑 Extension deactivated
+[20-07-2025 03:28:15 PM] INFO: 🚀 Extension activated
+[20-07-2025 03:28:24 PM] INFO: 🛑 Extension deactivated
+[12-08-2025 05:44:57 PM] INFO: 🚀 Extension activated
+[12-08-2025 11:32:55 PM] INFO: ✅ Received from Webview:
+→ Meta: {
+  "type": "sendJiraUrl",
+  "payload": {
+    "jiraUrl": "https://yorkhackathonteam15.atlassian.net/browse/WEAT-1"
+  }
+}
