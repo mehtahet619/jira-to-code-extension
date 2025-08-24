@@ -1,12 +1,13 @@
 # Jira-to-Code VS Code Extension
 
+[![Version](https://img.shields.io/npm/v/jira-to-code.svg)](https://www.npmjs.com/package/jira-to-code)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-![VS Code](https://img.shields.io/badge/VSCode-Extension-blue)
-![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+[![VS Code](https://img.shields.io/badge/VSCode-Extension-blue)](https://code.visualstudio.com/)
+[![Node Version](https://img.shields.io/badge/node-18+-green.svg)](https://nodejs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.4.5-blue.svg)](https://www.typescriptlang.org/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/UmangDalvadi/jira-to-code)
 
-Turn a Jira ticket into a ready-to-review pull request with one command.  
-This extension connects Jira, Git, and LLMs to automate the busy work: parsing requirements, generating code and tests, opening a PR, and updating Jira.  
-The default LLM can be swapped for your own.
+Turn a Jira ticket into a ready‑to‑review pull request with one command. This extension connects Jira, Git, and LLMs to automate the busy work: parsing requirements, generating code and tests, opening a PR, and updating Jira. The default LLM can be swapped for your own.
 
 ---
 
