@@ -3,8 +3,8 @@ import axios from "axios";
 import logger from "../utils/logger";
 import { FromWebview, ToWebview } from "../constants/messageTypes";
 import { SERVER_DOMAIN } from "../config";
-import { initiateJiraAuth } from "../services/initiateJiraAuth";
-import { fetchJiraAndExtract } from "../services/fetchJiraTicketDetails";
+import { IntegrationService } from "../services/IntegrationService";
+import { IntegrationPlatform } from "../types";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -52,49 +52,61 @@ export async function handleWebviewMessage(
         // break;
 
         case FromWebview.SendJiraUrl:
-            const jiraUrl = message.payload.jiraUrl;
+            const ticketUrl = message.payload.jiraUrl;
             const token = await context.secrets.get("jira_access_token");
 
-            // context.secrets.delete("jira_access_token");
-            // context.secrets.delete("jira_refresh_token");
-            // if (!jiraUrl) {
-            //     vscode.window.showErrorMessage("❌ Jira URL is missing.");
-            //     return;
-            // }
+            if (!ticketUrl) {
+                vscode.window.showErrorMessage("❌ Ticket URL is missing.");
+                return;
+            }
 
-            if (!token) {
-                vscode.window.showWarningMessage("🔐 Please authenticate with Jira first.");
-                const authUrl = (await axios.get(SERVER_DOMAIN + "/api/auth/jira")).data.authUrl;
-                vscode.env.openExternal(vscode.Uri.parse(authUrl));
+            const integrationService = new IntegrationService();
+            
+            // Check if URL is supported
+            if (!integrationService.isUrlSupported(ticketUrl)) {
+                vscode.window.showErrorMessage("❌ Unsupported ticket URL format. Supported platforms: Jira, Trello, Linear, GitHub Issues.");
+                return;
+            }
+
+            const adapter = integrationService.getAdapterForUrl(ticketUrl);
+            if (!adapter) {
+                vscode.window.showErrorMessage("❌ No adapter found for this URL.");
+                return;
+            }
+
+            // Check authentication for the specific platform
+            const isAuthenticated = await integrationService.isAuthenticated(adapter.platform);
+            if (!isAuthenticated) {
+                vscode.window.showWarningMessage(`🔐 Please authenticate with ${adapter.name} first.`);
+                
+                // For Jira, fallback to server-based auth if available
+                if (adapter.platform === IntegrationPlatform.JIRA && !token) {
+                    try {
+                        const authUrl = (await axios.get(SERVER_DOMAIN + "/api/auth/jira")).data.authUrl;
+                        vscode.env.openExternal(vscode.Uri.parse(authUrl));
+                    } catch {
+                        await integrationService.initiateAuth(adapter.platform);
+                    }
+                } else {
+                    await integrationService.initiateAuth(adapter.platform);
+                }
                 return;
             }
 
             try {
                 vscode.window.showInformationMessage(
-                    "🧾 Fetching Jira issue and extracting insights..."
+                    `🧾 Fetching ${adapter.name} ticket and extracting insights...`
                 );
 
-                // const result = await fetchJiraAndExtract(jiraUrl, token);
+                const result = await integrationService.fetchTicketAndExtract(ticketUrl, token);
 
-                const jiraDocs = await axios.post(SERVER_DOMAIN + "/api/jira/ticket-details", {
-                    jiraUrl,
-                    accessToken: token,
-                });
-
-                console.log("Jira Docs:", jiraDocs.data.extracted);
-
-                // const featureDoc = fs.readFileSync(
-                //     "d:/CODE KA DOZE/POWER_PROJECTS/Jira-to-Code/jira-to-code-extension/src/utils/demo-docs.txt",
-                //     "utf-8"
-                // );
-
-                // console.log("Feature Doc:", featureDoc);
+                console.log("Extracted Content:", result.extracted);
 
                 const generatedCode = await axios.post(SERVER_DOMAIN + "/api/jira/generate-code", {
-                    jiraDocs: jiraDocs.data.extracted,
+                    jiraDocs: result.extracted,
                 });
 
-                vscode.window.showInformationMessage("✅ Jira insights ready.");
+                vscode.window.showInformationMessage("✅ Ticket insights ready.");
                 const setupData = generatedCode.data;
                 // const setupData = {
                 //     setup: {

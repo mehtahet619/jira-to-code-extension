@@ -1,7 +1,7 @@
 {
     "name": "jira-to-code",
-    "displayName": "Jira-to-Code",
-    "description": "A VS Code extension that converts Jira tickets to code using AI.",
+    "displayName": "Ticket-to-Code",
+    "description": "A VS Code extension that converts tickets from Jira, Trello, Linear, and GitHub Issues to code using AI.",
     "version": "0.0.1",
     "engines": {
         "vscode": "^1.100.0"
@@ -15,7 +15,7 @@
         "commands": [
             {
                 "command": "jira-to-code.ai",
-                "title": "Jira to Code AI"
+                "title": "Ticket to Code AI"
             }
         ],
         "uriHandler": true
@@ -49,13 +49,8 @@
         "vite": "^6.0.0",
         "vite-plugin-eslint": "^1.8.1"
     },
-    "files": [
-        "out",
-        "webview/dist",
-        "media",
-        "README.md"
-    ],
-    "icon": "media/icon.png",
+
+
     "license": "MIT",
     "publisher": "umangdalvadi",
     "repository": {
